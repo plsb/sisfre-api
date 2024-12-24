@@ -51,11 +51,11 @@ To get started with the API, clone this repository and install the dependencies:
 ## Configuration
 
 Create a `.env` file in the root directory with the required configurations:
-DB_HOST=host
-DB_USER=user
-DB_PASSWORD=password
-DB_NAME=sisfre
-JWT_SECRET=secrectkey
+- DB_HOST=host
+- DB_USER=user
+- DB_PASSWORD=password
+- DB_NAME=sisfre
+- JWT_SECRET=secrectkey
 
 ## Running the API
 
