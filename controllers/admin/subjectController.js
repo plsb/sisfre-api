@@ -13,6 +13,7 @@ exports.registerSubject = async (req, res) => {
     try {
         // Verificar se já existe uma disciplina com a mesma sigla
         const existingSubject = await Subject.findOne({ where: { acronym } });
+
         if (existingSubject) {
             return res.status(400).json({ error: 'Já existe uma disciplina cadastrada com essa sigla.' });
         }
@@ -23,12 +24,13 @@ exports.registerSubject = async (req, res) => {
             acronym,
         });
 
-        res.status(201).json({ subject: newSubject });
+        return res.status(201).json({ subject: newSubject });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erro ao cadastrar disciplina.' });
+        console.error('Erro ao cadastrar disciplina:', error);
+        return res.status(500).json({ error: 'Erro ao cadastrar disciplina. Tente novamente mais tarde.' });
     }
 };
+
 
 // Atualizar disciplina
 exports.updateSubject = async (req, res) => {

@@ -8,6 +8,7 @@ const userController = require('../../controllers/admin/userController');  // Ve
 router.post('/users', authMiddleware, isAdmin, userController.registerUser);
 router.put('/users/:id', authMiddleware, isAdmin, userController.updateUser);
 router.get('/users', authMiddleware, isAdmin, userController.getUsers);
+router.get('/users/all', authMiddleware, isAdmin, userController.getAllUsers);
 router.get('/users/:id', authMiddleware, isAdmin, userController.getUserById);
 router.delete('/users/:id', authMiddleware, isAdmin, userController.deleteUser);
 

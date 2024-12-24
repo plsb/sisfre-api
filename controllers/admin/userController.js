@@ -3,13 +3,11 @@ const User = require('../../models/admin/User');
 const bcrypt = require('bcryptjs');
 
 exports.registerUser = async (req, res) => {
-  const { email, password, username } = req.body;
+  const { email, password, username, accessType } = req.body;
 
-  if (!email || !password || !username) {
-    return res.status(400).json({ error: 'Todos os campos (email, password, username) são obrigatórios' });
+  if (!email || !password || !username || !accessType) {
+    return res.status(400).json({ error: 'Todos os campos (email, senha, nome e tipo de acesso) são obrigatórios' });
   }
-
-  const accessType = "professor";
 
   try {
     // Verificar se já existe um usuário com o e-mail informado
@@ -27,11 +25,11 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  const { email, password, username } = req.body;
+  const { email, password, username, accessType } = req.body;
   const userId = req.params.id;
 
-  if (!email && !password && !username) {
-    return res.status(400).json({ error: 'Pelo menos um campo (email, password, username) deve ser fornecido para atualização' });
+  if (!email && !password && !username && !accessType) {
+    return res.status(400).json({ error: 'Pelo menos um campo (email, senha, nome e tipo de acesso) deve ser fornecido para atualização' });
   }
 
   try {
@@ -61,6 +59,10 @@ exports.updateUser = async (req, res) => {
     // Atualizar o username, se fornecido
     if (username) {
       user.username = username;
+    }
+
+    if (accessType) {
+      user.accessType = accessType;
     }
 
     // Salvar as alterações no banco de dados
@@ -113,6 +115,33 @@ exports.getUsers = async (req, res) => {
     res.status(500).json({ error: 'Erro ao listar usuários' });
   }
 };
+
+exports.getAllUsers = async (req, res) => {
+  const { username } = req.query;
+
+  try {
+    const where = {
+      accessType: { [Sequelize.Op.notIn]: ['admin', 'staff'] },
+    };
+
+    if (username) {
+      where.username = {
+        [Sequelize.Op.like]: `%${username}%`,
+      };
+    }
+
+    const users = await User.findAll({
+      where,
+      order: [['username', 'ASC']],
+    });
+    
+    res.json({ users });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Erro ao listar usuários' });
+  }
+};
+
 
 exports.getUserById = async (req, res) => {
   const userId = req.params.id; 

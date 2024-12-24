@@ -1,5 +1,6 @@
 const { Sequelize } = require('sequelize');
 const Semester = require('../../models/admin/Semester');
+const moment = require('moment');
 
 // Registrar um novo semestre
 exports.registerSemester = async (req, res) => {
@@ -10,8 +11,10 @@ exports.registerSemester = async (req, res) => {
     return res.status(400).json({ error: 'Os campos (ano, semestre, tipo, data de início e data de término) são obrigatórios.' });
   }
 
+  const semesterInt = parseInt(semester, 10);
+
   // Verificação se o semestre é "1" ou "2"
-  if (!['1', '2'].includes(semester)) {
+  if (![1, 2].includes(semesterInt)) {
     return res.status(400).json({ error: 'O semestre deve ser "1" ou "2".' });
   }
 
@@ -23,7 +26,7 @@ exports.registerSemester = async (req, res) => {
   try {
     // Verificar se já existe um semestre com o mesmo ano e tipo
     const existingSemester = await Semester.findOne({
-      where: { year, type },
+      where: { year, semester, type },
     });
 
     if (existingSemester) {
@@ -32,7 +35,7 @@ exports.registerSemester = async (req, res) => {
 
     // Verificar se já existe um semestre com o mesmo ano e semestre (1 ou 2)
     const existingSemesterForThisSemester = await Semester.findOne({
-      where: { year, semester },
+      where: { year, semester, type },
     });
 
     if (existingSemesterForThisSemester) {
@@ -76,15 +79,21 @@ exports.updateSemester = async (req, res) => {
     // Atualizar os campos, se fornecidos
     if (year) semesterToUpdate.year = year;
     if (semester) {
-      if (!['1', '2'].includes(semester)) {
+      const semesterInt = parseInt(semester, 10);
+      if (![1, 2].includes(semesterInt)) {
         return res.status(400).json({ error: 'O semestre deve ser "1" ou "2".' });
       }
       semesterToUpdate.semester = semester;
     }
     if (type) semesterToUpdate.type = type;
     if (status !== undefined) semesterToUpdate.status = status; // Verifica explicitamente para aceitar valores booleanos
-    if (start_date) semesterToUpdate.start_date = start_date;
-    if (end_date) semesterToUpdate.end_date = end_date;
+    if (start_date) {
+      semesterToUpdate.start_date = moment(start_date).local().format('YYYY-MM-DD');
+    }
+
+    if (end_date) {
+      semesterToUpdate.end_date = moment(end_date).local().format('YYYY-MM-DD');
+    }
 
     // Verificar se a data de início é menor que a data de término
     if (start_date && new Date(start_date) >= new Date(end_date)) {
@@ -93,20 +102,11 @@ exports.updateSemester = async (req, res) => {
 
     // Verificar se já existe um semestre com o mesmo ano e tipo (ou semestre e ano)
     const existingSemester = await Semester.findOne({
-      where: { year, type },
+      where: { year, semester, type },
     });
 
-    console.log("Semestre: ", semesterId, existingSemester.id)
     if (existingSemester && existingSemester.id !== semesterId) {
       return res.status(400).json({ error: 'Já existe um semestre cadastrado para este ano e tipo.' });
-    }
-
-    const existingSemesterForThisSemester = await Semester.findOne({
-      where: { year, semester },
-    });
-
-    if (existingSemesterForThisSemester && existingSemesterForThisSemester.id !== semesterId) {
-      return res.status(400).json({ error: 'Já existe um semestre cadastrado para este ano e semestre.' });
     }
 
     // Salvar alterações
@@ -121,24 +121,34 @@ exports.updateSemester = async (req, res) => {
 
 // Listar semestres
 exports.getSemesters = async (req, res) => {
-  const { year } = req.query;
+  const { year, status } = req.query;
 
   try {
-    let semesters;
+    let whereCondition = {};
 
+    // Adiciona filtro por ano, caso presente
     if (year) {
-      // Busca semestres com base no ano
-      semesters = await Semester.findAll({
-        where: {
-          year: {
-            [Sequelize.Op.eq]: year,
-          },
-        },
-      });
-    } else {
-      // Retorna todos os semestres
-      semesters = await Semester.findAll();
+      whereCondition.year = {
+        [Sequelize.Op.eq]: year,
+      };
     }
+
+    // Adiciona filtro por status, caso presente
+    if (status) {
+      whereCondition.status = {
+        [Sequelize.Op.eq]: status,
+      };
+    }
+
+    // Realiza a consulta com base nos filtros
+    const semesters = await Semester.findAll({
+      where: whereCondition,
+      order: [
+        ['year', 'DESC'],
+        ['semester', 'DESC'],
+        ['status', 'DESC'],
+      ],
+    });
 
     res.json({ semesters });
   } catch (error) {
@@ -146,6 +156,8 @@ exports.getSemesters = async (req, res) => {
     res.status(500).json({ error: 'Erro ao listar semestres.' });
   }
 };
+
+
 
 // Buscar semestre por ID
 exports.getSemesterById = async (req, res) => {

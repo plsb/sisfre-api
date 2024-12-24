@@ -112,6 +112,7 @@ exports.getCourses = async (req, res) => {
             attributes: ['id', 'username', 'email'],
           },
         ],
+        order: [['name', 'ASC']], // Ordena os resultados por nome em ordem crescente
       });
     } else {
       // Retorna todos os cursos
@@ -122,7 +123,8 @@ exports.getCourses = async (req, res) => {
             as: 'coordinator',
             attributes: ['id', 'username', 'email'],
           },
-        ]
+        ],
+        order: [['name', 'ASC']], // Ordena os resultados por nome em ordem crescente
       });
     }
 
@@ -132,6 +134,7 @@ exports.getCourses = async (req, res) => {
     res.status(500).json({ error: 'Erro ao listar cursos' });
   }
 };
+
 
 // Buscar curso por ID
 exports.getCourseById = async (req, res) => {
@@ -167,4 +170,27 @@ exports.getCourseById = async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar curso' });
   }
 };
+
+exports.deleteCourse = async (req, res) => {
+  const courseId = req.params.id;
+
+  try {
+    // Procura o curso pelo ID
+    const course = await Course.findByPk(courseId);
+
+    if (!course) {
+      // Retorna erro 404 se o curso não for encontrado
+      return res.status(404).json({ error: 'Curso não encontrado.' });
+    }
+
+    // Exclui o curso
+    await course.destroy();
+    res.status(200).json({ message: 'Curso deletado com sucesso.' });
+  } catch (error) {
+    console.error(error);
+    // Retorna erro 500 em caso de falha
+    res.status(500).json({ error: 'Erro ao deletar o curso.' });
+  }
+};
+
 

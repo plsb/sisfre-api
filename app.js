@@ -7,8 +7,11 @@ const userRoutes = require('./routes/admin/userRoutes');
 const courseRoutes = require('./routes/admin/courseRoutes');
 const semesterRoutes = require('./routes/admin/semesterRoutes');
 const subjectRoutes = require('./routes/admin/subjectRoutes');
+const schoolSaturdaysRoutes = require('./routes/admin/schoolSaturdaysRoutes');
 const User = require('./models/admin/User');
 const Course = require('./models/admin/Course');
+const SchoolSaturday = require('./models/admin/SchoolSaturday');
+const Semester = require('./models/admin/Semester');
 
 const app = express();
 
@@ -26,6 +29,7 @@ app.use('/api', userRoutes);
 app.use('/api', courseRoutes);
 app.use('/api', semesterRoutes);
 app.use('/api', subjectRoutes);
+app.use('/api', schoolSaturdaysRoutes);
 
 // Função para criar o usuário administrador, se não existir
 const createAdminIfNotExists = async () => {
@@ -45,6 +49,7 @@ const createAdminIfNotExists = async () => {
 
 // Defina as associações após a importação dos modelos
 Course.belongsTo(User, { as: 'coordinator', foreignKey: 'coordinatorId' });
+SchoolSaturday.belongsTo(Semester, {as: 'semester', foreignKey: 'semesterId'})
 
 sequelize.sync({ force: false }) // force: false para não apagar os dados existentes
   .then(async () => {
