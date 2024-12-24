@@ -2,12 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const sequelize = require('./config/database');
+//Routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/admin/userRoutes');
 const courseRoutes = require('./routes/admin/courseRoutes');
 const semesterRoutes = require('./routes/admin/semesterRoutes');
 const subjectRoutes = require('./routes/admin/subjectRoutes');
 const schoolSaturdaysRoutes = require('./routes/admin/schoolSaturdaysRoutes');
+const holidaysRoutes = require('./routes/admin/holidaysRoutes');
+//Models
 const User = require('./models/admin/User');
 const Course = require('./models/admin/Course');
 const SchoolSaturday = require('./models/admin/SchoolSaturday');
@@ -30,6 +33,7 @@ app.use('/api', courseRoutes);
 app.use('/api', semesterRoutes);
 app.use('/api', subjectRoutes);
 app.use('/api', schoolSaturdaysRoutes);
+app.use('/api', holidaysRoutes);
 
 // Função para criar o usuário administrador, se não existir
 const createAdminIfNotExists = async () => {

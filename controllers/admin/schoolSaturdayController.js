@@ -129,7 +129,7 @@ exports.getSchoolSaturdays = async (req, res) => {
                         attributes: ['id', 'year', 'semester', 'type'],
                     },
                 ],
-                order: [['date', 'ASC']], // Ordena por data em ordem crescente
+                order: [['date', 'DESC']], // Ordena por data em ordem crescente
             });
         } else {
             // Retorna todos os sábados escolares
@@ -141,7 +141,7 @@ exports.getSchoolSaturdays = async (req, res) => {
                         attributes: ['id', 'year', 'semester', 'type'],
                     },
                 ],
-                order: [['date', 'ASC']], // Ordena por data em ordem crescente
+                order: [['date', 'DESC']], // Ordena por data em ordem crescente
             });
         }
 
