@@ -18,6 +18,8 @@ const Course = require('./models/admin/Course');
 const SchoolSaturday = require('./models/admin/SchoolSaturday');
 const Semester = require('./models/admin/Semester');
 const Class = require('./models/coordinator/Class');
+const ClassSchedule = require('./models/coordinator/ClassSchedule');
+const Subject = require('./models/admin/Subject');
 
 const app = express();
 
@@ -64,7 +66,10 @@ const createAdminIfNotExists = async () => {
 Course.belongsTo(User, { as: 'coordinator', foreignKey: 'coordinatorId' });
 SchoolSaturday.belongsTo(Semester, {as: 'semester', foreignKey: 'semesterId'});
 Class.belongsTo(Course, {as: 'course', foreignKey: 'courseId'});
-Class.belongsTo(Semester, {as: 'semester', foreignKey: 'semesterId'})
+Class.belongsTo(Semester, {as: 'semester', foreignKey: 'semesterId'});
+ClassSchedule.belongsTo(User, {as: 'professor', foreignKey: 'professorId'})
+ClassSchedule.belongsTo(Class, {as: 'class', foreignKey: 'classId'})
+ClassSchedule.belongsTo(Subject, {as: 'subject', foreignKey: 'subjectId'})
 
 sequelize.sync({ force: false }) // force: false para não apagar os dados existentes
   .then(async () => {

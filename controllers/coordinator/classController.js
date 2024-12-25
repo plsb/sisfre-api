@@ -2,6 +2,9 @@ const { Sequelize } = require('sequelize');
 const Class = require('../../models/coordinator/Class');
 const Course = require('../../models/admin/Course');
 const Semester = require('../../models/admin/Semester');
+const ClassSchedule = require('../../models/coordinator/ClassSchedule');
+const User= require('../../models/admin/User');
+const Subject = require('../../models/admin/Subject');
 
 exports.registerClass = async (req, res) => {
     const { courseId, description, semesterId } = req.body;
@@ -128,6 +131,22 @@ exports.getClasses = async (req, res) => {
                         attributes: ['id', 'year', 'semester', 'type', 'start_date', 'end_date'],
                         where: { status: 1 },
                     },
+                    {
+                        model: ClassSchedule,
+                        as: 'classSchedules', // Assumes 'classSchedules' as the alias in the association
+                        include: [
+                            {
+                                model: User,
+                                as: 'professor',
+                                attributes: ['id', 'username', 'email', 'accessType'], // Example attributes of User (professor)
+                            },
+                            {
+                                model: Subject,
+                                as: 'subject',
+                                attributes: ['id', 'name'],
+                            },
+                        ],
+                    },
                 ],
                 order: [['id', 'ASC']], // Ordena os resultados por ID em ordem crescente
             });
@@ -147,6 +166,22 @@ exports.getClasses = async (req, res) => {
                         attributes: ['id', 'year', 'semester', 'type', 'start_date', 'end_date'],
                         where: { status: 1 },
                     },
+                    {
+                        model: ClassSchedule,
+                        as: 'classSchedules',
+                        include: [
+                            {
+                                model: User,
+                                as: 'professor',
+                                attributes: ['id', 'username', 'email', 'accessType'],
+                            },
+                            {
+                                model: Subject,
+                                as: 'subject',
+                                attributes: ['id', 'name'],
+                            },
+                        ],
+                    },
                 ],
                 order: [['id', 'ASC']], // Ordena os resultados por ID em ordem crescente
             });
@@ -158,6 +193,7 @@ exports.getClasses = async (req, res) => {
         res.status(500).json({ error: 'Erro ao listar turmas' });
     }
 };
+
 
 // Buscar turma por ID
 exports.getClassById = async (req, res) => {

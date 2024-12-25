@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
 const Course = require('../admin/Course');
 const Semester = require('../admin/Semester');
+const ClassSchedule = require('../coordinator/ClassSchedule');
 
 const Class = sequelize.define('class', {
     id: {
@@ -34,5 +35,7 @@ const Class = sequelize.define('class', {
         allowNull: false,    // Uma classe precisa estar associada a um semestre
     },
 });
+
+Class.hasMany(ClassSchedule, { as: 'classSchedules', foreignKey: 'classId' });
 
 module.exports = Class;
