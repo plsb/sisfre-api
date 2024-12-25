@@ -57,6 +57,10 @@ Create a `.env` file in the root directory with the required configurations:
 - DB_NAME=sisfre
 - JWT_SECRET=secrectkey
 
+To migrate the database:
+```bash
+npx sequelize-cli db:migrate
+```
 ## Running the API
 
 To start the API locally:

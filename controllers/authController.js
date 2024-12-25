@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/admin/User');
+const Course = require('../models/admin/Course');
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -12,6 +13,7 @@ exports.login = async (req, res) => {
 
   try {
     const user = await User.findOne({ where: { email } });
+
     if (!user) {
       return res.status(400).json({ error: 'Usuário não encontrado' });
     }
@@ -21,7 +23,20 @@ exports.login = async (req, res) => {
       return res.status(400).json({ error: 'Senha incorreta' });
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const userWithoutPassword = user.toJSON();
+    delete userWithoutPassword.password;
+
+    const course = await Course.findOne({
+      where: {
+        coordinatorId: user.id
+      }
+    });
+
+    const token = jwt.sign(
+        {
+          id: user.id,
+          accessType: course ? 'coordinator' : user.accessType
+        }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
     res.json({ token });
   } catch (error) {

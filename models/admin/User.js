@@ -4,6 +4,11 @@ const bcrypt = require('bcryptjs');
 const Course = require('./Course');
 
 const User = sequelize.define('user', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   username: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -20,16 +25,16 @@ const User = sequelize.define('user', {
   accessType: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'professor',  // 'professor' ou 'admin'
+    defaultValue: 'professor',  // 'professor', 'admin' ou 'staff'
   },
 });
+
+User.hasMany(Course, { foreignKey: 'coordinatorId', as: 'courses' });
 
 // Hook para gerar a senha hash antes de salvar no banco
 User.beforeCreate(async (user) => {
   const hashedPassword = await bcrypt.hash(user.password, 10);
   user.password = hashedPassword;
 });
-
-User.hasMany(Course, { foreignKey: 'coordinatorId', as: 'courses' });
 
 module.exports = User;

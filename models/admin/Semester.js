@@ -1,13 +1,18 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../../config/database'); // Assumindo que a configuração do Sequelize está aqui
+const sequelize = require('../../config/database');
 
 const Semester = sequelize.define('semester', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   year: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
   semester: {
-    type: DataTypes.ENUM('1', '2'), // Somente 1 ou 2
+    type: DataTypes.ENUM('1', '2'), // Somente 1 ou 2 que representa primeiro ou segundo semestre
     allowNull: false,
   },
   type: {

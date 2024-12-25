@@ -1,8 +1,13 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../../config/database'); // Assumindo que a configuração do Sequelize está aqui
+const sequelize = require('../../config/database');
 const User = require('./User');
 
 const Course = sequelize.define('course', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -28,5 +33,7 @@ const Course = sequelize.define('course', {
     allowNull: true,      // O curso pode ser criado sem um coordenador inicialmente
   },
 });
+
+//Course.belongsTo(User, { as: 'coordinator', foreignKey: 'coordinatorId' });
 
 module.exports = Course;

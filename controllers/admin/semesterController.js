@@ -157,8 +157,6 @@ exports.getSemesters = async (req, res) => {
   }
 };
 
-
-
 // Buscar semestre por ID
 exports.getSemesterById = async (req, res) => {
   const semesterId = req.params.id;
