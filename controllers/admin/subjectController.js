@@ -97,7 +97,6 @@ exports.getSubjects = async (req, res) => {
     }
 };
 
-
 // Buscar disciplina por ID
 exports.getSubjectById = async (req, res) => {
     const subjectId = req.params.id;

@@ -11,7 +11,9 @@ const subjectRoutes = require('./routes/admin/subjectRoutes');
 const schoolSaturdaysRoutes = require('./routes/admin/schoolSaturdaysRoutes');
 const holidaysRoutes = require('./routes/admin/holidaysRoutes');
 const classesRoutes = require('./routes/coordinator/classRoutes');
-const allUsersRoutes = require('./routes/all-users/allUsersRoutes')
+const allUsersRoutes = require('./routes/all-users/allUsersRoutes');
+const coordinatorRoutes = require('./routes/coordinator/coordinatorRoutes');
+const classScheduleRoutes = require('./routes/coordinator/classScheduleRoutes');
 //Models
 const User = require('./models/admin/User');
 const Course = require('./models/admin/Course');
@@ -22,7 +24,6 @@ const ClassSchedule = require('./models/coordinator/ClassSchedule');
 const Subject = require('./models/admin/Subject');
 
 const app = express();
-
 
 dotenv.config();
 
@@ -40,6 +41,8 @@ app.use('/api', subjectRoutes);
 app.use('/api', schoolSaturdaysRoutes);
 app.use('/api', holidaysRoutes);
 app.use('/api', allUsersRoutes);
+app.use('/api', coordinatorRoutes);
+app.use('/api', classScheduleRoutes);
 
 //Rotas do Coordenador
 app.use('/api', classesRoutes);

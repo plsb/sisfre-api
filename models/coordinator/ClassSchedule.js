@@ -35,7 +35,7 @@ const ClassSchedule = sequelize.define('classSchedule', {
         allowNull: false,                    // Shift is required
     },
     schedule: {
-        type: DataTypes.ENUM('A', 'B', 'C', 'D'), // Class time (A, B, C, D)
+        type: DataTypes.ENUM('A', 'B', 'C', 'D', 'AB', 'CD'), // Class time (A, B, C, D, AB, CD)
         allowNull: false,                       // Schedule is required
     },
     professorId: {

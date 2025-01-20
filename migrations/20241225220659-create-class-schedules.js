@@ -44,7 +44,7 @@ module.exports = {
         allowNull: false,
       },
       schedule: {
-        type: Sequelize.ENUM('A', 'B', 'C', 'D'),
+        type: Sequelize.ENUM('A', 'B', 'C', 'D', 'AB', 'CD'),
         allowNull: false,
       },
       dayWeek: {
